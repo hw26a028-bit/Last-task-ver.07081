@@ -4,6 +4,7 @@ export interface YokaiData {
   hp: number;
   attack: number;
   description: string;
+  image?: string;
 }
 
 export interface PhraseData {

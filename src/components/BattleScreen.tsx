@@ -411,18 +411,32 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
             </div>
           </div>
 
-          {/* 妖怪のシンボリックなビジュアル */}
-          <div className="relative w-24 h-24 md:w-32 md:h-32 bg-stone-950 border border-stone-800 rounded-full flex items-center justify-center shadow-lg mb-3 overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,100,50,0.1),transparent_70%)] animate-pulse"></div>
-            {/* 巨大な漢字影絵 */}
-            <div className="absolute font-serif text-6xl md:text-8xl text-stone-900/60 font-bold select-none">
-              {enemy.name[0]}
+          {/* 妖怪のシンボリックなビジュアル / 立ち絵 */}
+          {enemy.image ? (
+            <div className="relative w-64 md:w-80 aspect-video bg-stone-950 border border-amber-900/40 rounded-lg overflow-hidden shadow-2xl mb-4 flex items-center justify-center">
+              <img 
+                src={enemy.image} 
+                alt={enemy.name} 
+                referrerPolicy="no-referrer" 
+                className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-300 filter brightness-90 contrast-110"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950 to-transparent h-16"></div>
+              {/* 薄暗い和風の霧のような妖気エフェクト */}
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(180,50,50,0.06),transparent_80%)] animate-pulse"></div>
             </div>
-            {/* 動的なシンボル */}
-            <div className="z-10 text-stone-300 font-serif text-xl md:text-2xl">
-              {enemy.name[0]}
+          ) : (
+            <div className="relative w-24 h-24 md:w-32 md:h-32 bg-stone-950 border border-stone-800 rounded-full flex items-center justify-center shadow-lg mb-3 overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,100,50,0.1),transparent_70%)] animate-pulse"></div>
+              {/* 巨大な漢字影絵 */}
+              <div className="absolute font-serif text-6xl md:text-8xl text-stone-900/60 font-bold select-none">
+                {enemy.name[0]}
+              </div>
+              {/* 動的なシンボル */}
+              <div className="z-10 text-stone-300 font-serif text-xl md:text-2xl">
+                {enemy.name[0]}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* 敵の基準ステータス */}
           <div className="flex gap-4 text-stone-500 font-mono text-[10px]">

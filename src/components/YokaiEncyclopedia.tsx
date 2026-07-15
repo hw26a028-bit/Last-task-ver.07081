@@ -86,25 +86,39 @@ export const YokaiEncyclopedia: React.FC<YokaiEncyclopediaProps> = ({
         <div className="flex-grow md:w-2/3 bg-stone-900/40 border border-stone-900 rounded p-6 flex flex-col justify-between overflow-y-auto scrollbar-thin h-full" id="encyclopedia-detail">
           {currentUnlocked ? (
             <div className="flex flex-col h-full justify-between" id="encyclopedia-detail-unlocked">
-              {/* 妖怪の和風おしゃれグラフィックプレースホルダー */}
-              <div className="relative w-full h-48 bg-stone-950 border border-stone-900 rounded mb-6 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(180,100,20,0.1),transparent_70%)]"></div>
-                
-                {/* 妖怪名の巨大漢字影絵 */}
-                <div className="absolute font-serif text-9xl text-stone-900/60 select-none pointer-events-none font-bold">
-                  {currentYokai.name[0]}
+              {/* 妖怪の和風おしゃれグラフィック */}
+              {currentYokai.image ? (
+                <div className="relative w-full aspect-video bg-stone-950 border border-amber-900/40 rounded overflow-hidden mb-6 flex items-center justify-center shadow-inner">
+                  <img 
+                    src={currentYokai.image} 
+                    alt={currentYokai.name} 
+                    referrerPolicy="no-referrer" 
+                    className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-300 filter brightness-90 contrast-110"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950/80 to-transparent h-12"></div>
+                  {/* 薄暗い和風の霧のような妖気エフェクト */}
+                  <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(180,50,50,0.06),transparent_80%)]"></div>
                 </div>
-
-                {/* 妖怪の姿のシンボリック表示 */}
-                <div className="z-10 text-center flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full border border-amber-800 flex items-center justify-center mb-3 bg-stone-900/80 shadow-lg text-amber-500 text-2xl font-serif">
+              ) : (
+                <div className="relative w-full h-48 bg-stone-950 border border-stone-900 rounded mb-6 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(180,100,20,0.1),transparent_70%)]"></div>
+                  
+                  {/* 妖怪名の巨大漢字影絵 */}
+                  <div className="absolute font-serif text-9xl text-stone-900/60 select-none pointer-events-none font-bold">
                     {currentYokai.name[0]}
                   </div>
-                  <span className="text-[10px] text-amber-600 font-serif tracking-[0.2em] uppercase">
-                    第{currentYokai.stage}幕の妖怪
-                  </span>
+
+                  {/* 妖怪の姿のシンボリック表示 */}
+                  <div className="z-10 text-center flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-full border border-amber-800 flex items-center justify-center mb-3 bg-stone-900/80 shadow-lg text-amber-500 text-2xl font-serif">
+                      {currentYokai.name[0]}
+                    </div>
+                    <span className="text-[10px] text-amber-600 font-serif tracking-[0.2em] uppercase">
+                      第{currentYokai.stage}幕の妖怪
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 名前と説明 */}
               <div className="mb-6">
