@@ -184,7 +184,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
     const { success, isComplete, newState } = handleKeyInput(typingState, key);
 
     if (success) {
-      audio.playMokugyo();
+      audio.playKatakata();
       setTotalTypedCorrectly(prev => prev + 1);
       setTypingState(newState);
 
@@ -249,6 +249,8 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
             audio.playDamage();
             setIsPlayerDamaged(true);
             setTimeout(() => setIsPlayerDamaged(false), 200);
+          } else if (shieldStatus === "完全ガード") {
+            audio.playGuard();
           }
 
           // 攻防両方の解決結果を戦闘ログへ反映

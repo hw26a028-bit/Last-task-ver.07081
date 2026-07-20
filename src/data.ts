@@ -144,10 +144,10 @@ export const STAGE_PHRASES: Record<number, PhraseData[]> = {
     { kanji: "木々の合間に建つ古い社", hiragana: "きぎのあいまにたつふるいやしろ", romaji: "kiginoaimanitatsufuruiyashiro" }
   ],
   6: [
-    { kanji: "マスクの下に鋭い牙", hiragana: "ますくのしたにするいきば", romaji: "masukunoshitanisuruyikiba" },
+    { kanji: "マスクの下に鋭い牙", hiragana: "ますくのしたにするいきば", romaji: "masukunoshitanisuruikiba" },
     { kanji: "護摩を焚いて邪気を払う", hiragana: "ごまをたいてじゃきをはらう", romaji: "gomawotaitejakiwoharau" },
     { kanji: "境内に漂うお香の香り", hiragana: "けいだいにただようおこうのかおり", romaji: "keidainitadayouokounokaori" },
-    { kanji: "赤いマントの怪しい影", hiragana: "あかいまんとのおかしいかげ", romaji: "akaimantonoakashiikage" },
+    { kanji: "赤いマントの怪しい影", hiragana: "あかいまんとのあやしいかげ", romaji: "akaimantonoayashiikage" },
     { kanji: "本堂に響くお経の声", hiragana: "ほんどうにひびくおきょうのこえ", romaji: "hondounihibikuokyounokoe" }
   ],
   7: [
@@ -158,7 +158,7 @@ export const STAGE_PHRASES: Record<number, PhraseData[]> = {
     { kanji: "邪悪な呪いを打ち破る儀式", hiragana: "じゃあくなのろいをうちやぶるぎしき", romaji: "jaakunonoroiwouchiyaburugishiki" }
   ],
   8: [
-    { kanji: "葉っぱを乗せて人間に化ける", hiragana: "はっぱを乗せてにんげんにばける", romaji: "happawonoseteningennibakeru" },
+    { kanji: "葉っぱを乗せて人間に化ける", hiragana: "はっぱをのせてにんげんにばける", romaji: "happawonoseteningennibakeru" },
     { kanji: "四方八方に結界を展開する", hiragana: "しほうはっぽうにけっかいをてんかいする", romaji: "shihouhappounikekkaiwotenkaisuru" },
     { kanji: "本堂の前に置かれた信楽焼", hiragana: "ほんどうのまえにおかれたしがらきやき", romaji: "hondounomaeniokaretashigarakiyaki" },
     { kanji: "満月の夜に踊る大狸", hiragana: "まんげつのよにおどるおおだぬき", romaji: "mangetsunoyoniodoruoodanuki" },
@@ -176,7 +176,7 @@ export const STAGE_PHRASES: Record<number, PhraseData[]> = {
     { kanji: "五臓六腑を清浄にして怨霊を退散させる", hiragana: "ごぞうろっぷをしょうじょうにしておんりょうをたいさんさせる", romaji: "gozouroppuwoshoujounishiteonryouwotaisansaseru" },
     { kanji: "朱塗りの本殿に響く厳かな太鼓の音", hiragana: "しゅぬりのほんでんにひびくおごそかなたいこのおと", romaji: "shunurinohondennihibikuogosokanataikoonoto" },
     { kanji: "羅生門の奥から聞こえる不気味な足音", hiragana: "らしょうもんのおくからきこえるぶきみなあしおと", romaji: "rashoumononookukarakikoerubukiminaashioto" },
-    { kanji: "九字真言を唱えて邪念を完全に打ち払う", hiragana: "くじしんごんをとなえてじゃねんをかんぜんにうちはらう", romaji: "kujishingonwotonaetejanenwokanzenniyuchiharau" }
+    { kanji: "九字真言を唱えて邪念を完全に打ち払う", hiragana: "くじしんごんをとなえてじゃねんをかんぜんにうちはらう", romaji: "kujishingonwotonaetejanenwokanzenniuchiharau" }
   ],
   11: [
     { kanji: "美しい姿の女郎蜘蛛が強靭な糸を放つ", hiragana: "うつくしいすがたのじょろうぐもがきょうじんないとをはなつ", romaji: "utsukushiisugatanojorougumogakyoujinnaitowohanatsu" },
@@ -188,7 +188,7 @@ export const STAGE_PHRASES: Record<number, PhraseData[]> = {
   12: [
     { kanji: "無数の怨念が集まりし巨大な骸骨が彷徨う", hiragana: "むすうのおんねんがあつまりしきょだいながいこつがさまよう", romaji: "musuunoonnengaatsumarishikyodainagaikotsugasamayou" },
     { kanji: "南無阿弥陀仏の経文を唱えて悪霊を除霊する", hiragana: "なむあみだぶつのきょうもんをとなえてあくりょうをじょれいする", romaji: "namuamidabutsunokyoumonwotonaeteakuryouwojoreisuru" },
-    { kanji: "闇夜に浮かび上がる三重の塔に霧が立ち込める", hiragana: "やみよにうかびあがるさんじゅうのとうにきりが立ちこめる", romaji: "yamiyoniukabiagarusanjuunotounikirigatachikomeru" },
+    { kanji: "闇夜に浮かび上がる三重の塔に霧が立ち込める", hiragana: "やみよにうかびあがるさんじゅうのとうにきりがたちこめる", romaji: "yamiyoniukabiagarusanjuunotounikirigatachikomeru" },
     { kanji: "戦場跡に転がる髑髏がカタカタと震える", hiragana: "せんじょうあとにころがるどくろがかたかたとふるえる", romaji: "senjouatonikorogarudokurogakatakatatofurueru" },
     { kanji: "不動明王の真言を唱えて魔を焼き尽くす", hiragana: "ふどうみょうおうのしんごんをとなえてまをやきつくす", romaji: "fudoumyouounoshingonwotonaetemawoyakitsukusu" }
   ],

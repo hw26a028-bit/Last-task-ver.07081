@@ -126,7 +126,7 @@
 #### ■ ステージ 6：口裂け女 (くちさけおんな)
 1. **漢字かな**: マスクの下に鋭い牙
    - **ひらがな**: ますくのしたにするいきば
-   - **ローマ字**: masukunoshitanisuruyikiba
+   - **ローマ字**: masukunoshitanisuruikiba
 2. **漢字かな**: 護摩を焚いて邪気を払う
    - **ひらがな**: ごまをたいてじゃきをはらう
    - **ローマ字**: gomawotaitejakiwoharau
@@ -134,8 +134,8 @@
    - **ひらがな**: けいだいにただようおこうのかおり
    - **ローマ字**: keidainitadayouokounokaori
 4. **漢字かな**: 赤いマントの怪しい影
-   - **ひらがな**: あかいまんとのおかしいかげ
-   - **ローマ字**: akaimantonoakashiikage
+   - **ひらがな**: あかいまんとのあやしいかげ
+   - **ローマ字**: akaimantonoayashiikage
 5. **漢字かな**: 本堂に響くお経の声
    - **ひらがな**: ほんどうにひびくおきょうのこえ
    - **ローマ字**: hondounihibikuokyounokoe
@@ -210,7 +210,7 @@
    - **ローマ字**: rashoumononookukarakikoerubukiminaashioto
 5. **漢字かな**: 九字真言を唱えて邪念を完全に打ち払う
    - **ひらがな**: くじしんごんをとなえてじゃねんをかんぜんにうちはらう
-   - **ローマ字**: kujishingonwotonaetejanenwokanzenniyuchiharau
+   - **ローマ字**: kujishingonwotonaetejanenwokanzenniuchiharau
 
 #### ■ ステージ 11：女郎蜘蛛 (じょろうぐも)
 1. **漢字かな**: 美しい姿の女郎蜘蛛が強靭な糸を放つ

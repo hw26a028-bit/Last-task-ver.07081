@@ -157,54 +157,70 @@ class SoundManager {
     oscEcho.stop(t + 0.21);
   }
 
-  // 不気味な木魚タイピング音（深く暗くこもったポクッ…）
-  public playMokugyo() {
+  // 小気味よいキーボード打鍵音（カタカタ）
+  public playKatakata() {
     this.resume();
     if (!this.ctx || !this.seGain) return;
 
     const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    const filter = this.ctx.createBiquadFilter();
+    
+    // ピッチと時間をわずかに揺らすことで、打鍵ごとに異なる自然な「カタカタ」感を演出
+    const randomPitchFactor = 0.9 + Math.random() * 0.2; // 0.9 ~ 1.1
+    const clickDuration = 0.015 * randomPitchFactor;
+    const releaseTime = 0.04 * randomPitchFactor;
 
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(150, t);
-    osc.frequency.exponentialRampToValueAtTime(80, t + 0.08);
+    // 1. 高周波の打鍵クリック音（ノイズ＋バンドパス）
+    const bufferSize = this.ctx.sampleRate * clickDuration;
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
 
-    filter.type = "lowpass";
-    filter.frequency.setValueAtTime(220, t);
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
 
-    gain.gain.setValueAtTime(0.4, t);
-    gain.gain.exponentialRampToValueAtTime(0.002, t + 0.1);
+    const noiseFilter = this.ctx.createBiquadFilter();
+    noiseFilter.type = "bandpass";
+    noiseFilter.frequency.setValueAtTime(2500 * randomPitchFactor, t);
+    noiseFilter.Q.setValueAtTime(5.0, t);
 
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.seGain);
+    const noiseGain = this.ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.08, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + clickDuration);
 
-    osc.start(t);
-    osc.stop(t + 0.11);
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(this.seGain);
 
-    // 幽霊のような跳ね返り微小エコー
-    const echoTime = t + 0.12;
-    const oscEcho = this.ctx.createOscillator();
-    const gainEcho = this.ctx.createGain();
+    // 2. キーの下底（ボトミング）の低いボディ音（中音域の三角波/正弦波スイープ）
+    const bodyOsc = this.ctx.createOscillator();
+    const bodyGain = this.ctx.createGain();
+    
+    bodyOsc.type = "triangle";
+    bodyOsc.frequency.setValueAtTime(320 * randomPitchFactor, t);
+    bodyOsc.frequency.exponentialRampToValueAtTime(180 * randomPitchFactor, t + releaseTime);
 
-    oscEcho.type = "sine";
-    oscEcho.frequency.setValueAtTime(100, echoTime);
-    oscEcho.frequency.exponentialRampToValueAtTime(70, echoTime + 0.05);
+    const bodyFilter = this.ctx.createBiquadFilter();
+    bodyFilter.type = "lowpass";
+    bodyFilter.frequency.setValueAtTime(600, t);
 
-    gainEcho.gain.setValueAtTime(0.08, echoTime);
-    gainEcho.gain.exponentialRampToValueAtTime(0.001, echoTime + 0.06);
+    bodyGain.gain.setValueAtTime(0.12, t);
+    bodyGain.gain.exponentialRampToValueAtTime(0.002, t + releaseTime);
 
-    oscEcho.connect(filter);
-    filter.connect(gainEcho);
-    gainEcho.connect(this.seGain);
+    bodyOsc.connect(bodyFilter);
+    bodyFilter.connect(bodyGain);
+    bodyGain.connect(this.seGain);
 
-    oscEcho.start(echoTime);
-    oscEcho.stop(echoTime + 0.07);
+    // 開始と停止
+    noise.start(t);
+    noise.stop(t + clickDuration);
+
+    bodyOsc.start(t);
+    bodyOsc.stop(t + releaseTime + 0.01);
   }
 
-  // タイピングミス音（背筋が凍りつく不協スライド風鳴り：ヒュゥゥ…）
+  // タイピングミス音（「ぶっ」という電子ブザーや鈍い不協和音）
   public playMiss() {
     this.resume();
     if (!this.ctx || !this.seGain) return;
@@ -213,75 +229,150 @@ class SoundManager {
     const osc1 = this.ctx.createOscillator();
     const osc2 = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
+
+    osc1.type = "sawtooth";
+    osc1.frequency.setValueAtTime(140, t);
+    osc1.frequency.linearRampToValueAtTime(130, t + 0.12);
+
+    osc2.type = "square";
+    osc2.frequency.setValueAtTime(143, t); // うなりを生むためのわずかなズレ
+    osc2.frequency.linearRampToValueAtTime(133, t + 0.12);
+
     const filter = this.ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    // 遮断周波数を350Hzから800Hzへ上げて、高調波をより多く残すことで硬くザラついた「ぶっ」にする
+    filter.frequency.setValueAtTime(800, t); 
 
-    osc1.type = "sine";
-    osc1.frequency.setValueAtTime(450, t);
-    osc1.frequency.linearRampToValueAtTime(700, t + 0.25);
-
-    osc2.type = "sine";
-    osc2.frequency.setValueAtTime(458, t); // デチューンによる激しいうなり
-    osc2.frequency.linearRampToValueAtTime(709, t + 0.25);
-
-    const vibrato = this.ctx.createOscillator();
-    const vibratoGain = this.ctx.createGain();
-    vibrato.frequency.setValueAtTime(16, t); // 高速な震え
-    vibratoGain.gain.setValueAtTime(20, t);
-
-    vibrato.connect(vibratoGain);
-    vibratoGain.connect(osc1.frequency);
-    vibratoGain.connect(osc2.frequency);
-
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(580, t);
-    filter.Q.setValueAtTime(2.0, t);
-
-    gain.gain.setValueAtTime(0.15, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+    // ゲインを0.25から0.50に引き上げて音量をアップ
+    gain.gain.setValueAtTime(0.50, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
 
     osc1.connect(filter);
     osc2.connect(filter);
     filter.connect(gain);
     gain.connect(this.seGain);
 
-    vibrato.start(t);
     osc1.start(t);
     osc2.start(t);
 
-    vibrato.stop(t + 0.3);
-    osc1.stop(t + 0.3);
-    osc2.stop(t + 0.3);
+    osc1.stop(t + 0.13);
+    osc2.stop(t + 0.13);
   }
 
-  // 妖怪への攻撃音（呪術的な切裂きと、不気味な高音キーンという倍音残響）
+  // 妖怪への攻撃音（神聖な鈴の「シャン」という澄んだ金属音）
   public playAttack() {
     this.resume();
     if (!this.ctx || !this.seGain) return;
 
     const t = this.ctx.currentTime;
 
-    // 呪われし不協和金属音スタック
-    const frequencies = [666, 1066, 1466, 1966];
+    // 1. 鈴の澄んだ共鳴をシミュレートするための高調波スタック
+    const frequencies = [880, 1320, 1760, 2640, 3520];
     frequencies.forEach((freq, idx) => {
       if (!this.ctx || !this.seGain) return;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
       osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, t + idx * 0.015);
+      osc.frequency.setValueAtTime(freq, t);
 
-      gain.gain.setValueAtTime(0.045, t + idx * 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.015 + 0.4); 
+      const duration = 0.5 - idx * 0.05;
+      // 各オシレーターのゲインを0.04から0.12に引き上げて音量を大幅アップ
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
 
       osc.connect(gain);
       gain.connect(this.seGain);
 
-      osc.start(t + idx * 0.015);
-      osc.stop(t + idx * 0.015 + 0.42);
+      osc.start(t);
+      osc.stop(t + duration + 0.02);
     });
 
-    // 闇を切り裂くようなノイズ
-    const bufferSize = this.ctx.sampleRate * 0.2;
+    // 2. 打撃の「硬さ」を際立たせるための超高域金属インパルス
+    const impulseOsc = this.ctx.createOscillator();
+    const impulseGain = this.ctx.createGain();
+    impulseOsc.type = "triangle";
+    impulseOsc.frequency.setValueAtTime(3200, t);
+    impulseOsc.frequency.exponentialRampToValueAtTime(1200, t + 0.03);
+
+    impulseGain.gain.setValueAtTime(0.15, t);
+    impulseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+
+    impulseOsc.connect(impulseGain);
+    impulseGain.connect(this.seGain);
+    impulseOsc.start(t);
+    impulseOsc.stop(t + 0.04);
+
+    // 3. 鈴が振られた時の「シャッ」という一瞬の鋭い摩擦・高音擦れ音（ノイズ＋鋭いハイパス）
+    const bufferSize = this.ctx.sampleRate * 0.08;
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = "highpass";
+    filter.frequency.setValueAtTime(4500, t); // 3000Hzから4500Hzに上げてきらびやかさと硬さを強化
+    filter.Q.setValueAtTime(3.0, t); // Q値を1.0から3.0に上げて金属の擦れ感を強める
+
+    const noiseGain = this.ctx.createGain();
+    // ノイズゲインを0.08から0.22に大幅引き上げ
+    noiseGain.gain.setValueAtTime(0.22, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(this.seGain);
+
+    noise.start(t);
+    noise.stop(t + 0.09);
+  }
+
+  // ダメージ被弾音（鈍く重い「ドスっ」という肉体衝撃音）
+  public playDamage() {
+    this.resume();
+    if (!this.ctx || !this.seGain) return;
+
+    const t = this.ctx.currentTime;
+
+    // 「ドッ」という低音の衝撃（アタックを鋭くするためtriangleに加えてsawtoothをブレンド）
+    const osc1 = this.ctx.createOscillator();
+    const osc2 = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc1.type = "triangle";
+    osc1.frequency.setValueAtTime(250, t);
+    osc1.frequency.exponentialRampToValueAtTime(40, t + 0.15); 
+
+    osc2.type = "sawtooth";
+    osc2.frequency.setValueAtTime(180, t);
+    osc2.frequency.exponentialRampToValueAtTime(30, t + 0.12);
+
+    const filterLow = this.ctx.createBiquadFilter();
+    filterLow.type = "lowpass";
+    // フィルター周波数を200Hzから450Hzに上げてアタック時の「ゴツッ」とした硬い衝撃感を出す
+    filterLow.frequency.setValueAtTime(450, t);
+
+    // ゲインを0.5から0.85に大幅引き上げて、体に突き刺さる音量にする
+    gain.gain.setValueAtTime(0.85, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+
+    osc1.connect(filterLow);
+    osc2.connect(filterLow);
+    filterLow.connect(gain);
+    gain.connect(this.seGain);
+
+    osc1.start(t);
+    osc2.start(t);
+    osc1.stop(t + 0.2);
+    osc2.stop(t + 0.18);
+
+    // 「スっ」という一瞬の衣服の擦れ、または鋭い一撃が刺さる湿ったノイズ
+    const bufferSize = this.ctx.sampleRate * 0.15;
     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -293,51 +384,67 @@ class SoundManager {
 
     const filter = this.ctx.createBiquadFilter();
     filter.type = "bandpass";
-    filter.frequency.setValueAtTime(1000, t);
-    filter.frequency.exponentialRampToValueAtTime(300, t + 0.18); 
-    filter.Q.setValueAtTime(4.0, t);
+    filter.frequency.setValueAtTime(400, t);
+    filter.Q.setValueAtTime(3.0, t); // Q値を上げてより鋭く
 
     const noiseGain = this.ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.1, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    // ノイズゲインを0.25から0.50に引き上げて肉体への被弾感を増強
+    noiseGain.gain.setValueAtTime(0.50, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
 
     noise.connect(filter);
     filter.connect(noiseGain);
     noiseGain.connect(this.seGain);
 
     noise.start(t);
-    noise.stop(t + 0.19);
+    noise.stop(t + 0.16);
   }
 
-  // ダメージ被弾音（奈落へ落ちる重低音地響き）
-  public playDamage() {
+  // 完全防御音（「キンっ」という硬質で澄んだ金属弾き音）
+  public playGuard() {
     this.resume();
     if (!this.ctx || !this.seGain) return;
 
     const t = this.ctx.currentTime;
 
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(80, t);
-    osc.frequency.exponentialRampToValueAtTime(10, t + 0.4); 
+    // 1. 「キンっ」と鋭く弾く高周波数の調和スタック
+    const frequencies = [2200, 3100, 4400];
+    frequencies.forEach((freq, idx) => {
+      if (!this.ctx || !this.seGain) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
 
-    const filterLow = this.ctx.createBiquadFilter();
-    filterLow.type = "lowpass";
-    filterLow.frequency.setValueAtTime(80, t);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, t);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.95, t + 0.08);
 
-    gain.gain.setValueAtTime(0.45, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+      const duration = 0.15 - idx * 0.02;
+      // 各オシレーターのゲインを0.07から0.20に引き上げ、防いだ実感を大きくアピール
+      gain.gain.setValueAtTime(0.20, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
 
-    osc.connect(filterLow);
-    filterLow.connect(gain);
-    gain.connect(this.seGain);
+      osc.connect(gain);
+      gain.connect(this.seGain);
 
-    osc.start(t);
-    osc.stop(t + 0.46);
+      osc.start(t);
+      osc.stop(t + duration + 0.01);
+    });
 
-    // ドサッというノイズ
-    const bufferSize = this.ctx.sampleRate * 0.3;
+    // 2. 超鋭い高音金属アタック（瞬間的なインパルス）
+    const sharpOsc = this.ctx.createOscillator();
+    const sharpGain = this.ctx.createGain();
+    sharpOsc.type = "sine";
+    sharpOsc.frequency.setValueAtTime(7500, t);
+    sharpGain.gain.setValueAtTime(0.25, t);
+    sharpGain.gain.exponentialRampToValueAtTime(0.001, t + 0.015);
+    
+    sharpOsc.connect(sharpGain);
+    sharpGain.connect(this.seGain);
+    sharpOsc.start(t);
+    sharpOsc.stop(t + 0.02);
+
+    // 3. 衝突時のきらびやかな高音ノイズアタック（火花の散るような鋭いカチッ）
+    const bufferSize = this.ctx.sampleRate * 0.04;
     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -348,19 +455,20 @@ class SoundManager {
     noise.buffer = buffer;
 
     const filter = this.ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.setValueAtTime(70, t);
+    filter.type = "highpass";
+    filter.frequency.setValueAtTime(7500, t); // 6000Hzから7500Hzに上げてより突き刺さるような高音にする
 
     const noiseGain = this.ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.35, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    // ノイズゲインを0.05から0.16にアップ
+    noiseGain.gain.setValueAtTime(0.16, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
 
     noise.connect(filter);
     filter.connect(noiseGain);
     noiseGain.connect(this.seGain);
 
     noise.start(t);
-    noise.stop(t + 0.31);
+    noise.stop(t + 0.05);
   }
 
   // --- BGM管理 (和風ホラー・ダークアンビエントへの一新) ---
